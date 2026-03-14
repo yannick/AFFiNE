@@ -21,8 +21,11 @@ import { extMimeMap, Transformer } from '@blocksuite/store';
 import type { AssetMap, ImportedFileEntry, PathBlobIdMap } from './type.js';
 import { createAssetsArchive, download, parseMatter, Unzip } from './utils.js';
 
-type ParsedFrontmatterMeta = Partial<
-  Pick<DocMeta, 'title' | 'createDate' | 'updatedDate' | 'tags' | 'favorite'>
+export type ParsedFrontmatterMeta = Partial<
+  Pick<
+    DocMeta,
+    'title' | 'createDate' | 'updatedDate' | 'tags' | 'favorite' | 'trash'
+  >
 >;
 
 const FRONTMATTER_KEYS = {
@@ -150,11 +153,18 @@ function buildMetaFromFrontmatter(
       }
       continue;
     }
+    if (FRONTMATTER_KEYS.trash.includes(key)) {
+      const trash = parseBoolean(value);
+      if (trash !== undefined) {
+        meta.trash = trash;
+      }
+      continue;
+    }
   }
   return meta;
 }
 
-function parseFrontmatter(markdown: string): {
+export function parseFrontmatter(markdown: string): {
   content: string;
   meta: ParsedFrontmatterMeta;
 } {
@@ -176,7 +186,7 @@ function parseFrontmatter(markdown: string): {
   }
 }
 
-function applyMetaPatch(
+export function applyMetaPatch(
   collection: Workspace,
   docId: string,
   meta: ParsedFrontmatterMeta
@@ -187,13 +197,14 @@ function applyMetaPatch(
   if (meta.updatedDate !== undefined) metaPatch.updatedDate = meta.updatedDate;
   if (meta.tags) metaPatch.tags = meta.tags;
   if (meta.favorite !== undefined) metaPatch.favorite = meta.favorite;
+  if (meta.trash !== undefined) metaPatch.trash = meta.trash;
 
   if (Object.keys(metaPatch).length) {
     collection.meta.setDocMeta(docId, metaPatch);
   }
 }
 
-function getProvider(extensions: ExtensionType[]) {
+export function getProvider(extensions: ExtensionType[]) {
   const container = new Container();
   extensions.forEach(ext => {
     ext.setup(container);
