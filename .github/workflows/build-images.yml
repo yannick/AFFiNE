@@ -263,6 +263,10 @@ jobs:
         with:
           app-version: ${{ inputs.app-version }}
 
+      - name: Set image name
+        id: image-name
+        run: echo "name=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+
       - name: Build backend Dockerfile
         uses: docker/build-push-action@v6
         with:
@@ -272,4 +276,4 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           provenance: true
           file: .github/deployment/node/Dockerfile
-          tags: ghcr.io/toeverything/affine:${{inputs.build-type}}-${{ inputs.git-short-hash }}
+          tags: ${{ steps.image-name.outputs.name }}:${{inputs.build-type}}-${{ inputs.git-short-hash }}

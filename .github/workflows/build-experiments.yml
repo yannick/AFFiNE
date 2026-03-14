@@ -1,0 +1,40 @@
+name: Build Experiments Container
+
+on:
+  push:
+    branches:
+      - experiments
+    paths-ignore:
+      - README.md
+
+permissions:
+  contents: write
+  id-token: write
+  packages: write
+
+jobs:
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-latest
+    outputs:
+      APP_VERSION: ${{ steps.version.outputs.APP_VERSION }}
+      GIT_SHORT_HASH: ${{ steps.version.outputs.GIT_SHORT_HASH }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Compute version
+        id: version
+        run: |
+          GIT_SHORT_HASH=$(git rev-parse --short HEAD)
+          APP_VERSION="0.0.0-canary.${GIT_SHORT_HASH}"
+          echo "APP_VERSION=$APP_VERSION" >> "$GITHUB_OUTPUT"
+          echo "GIT_SHORT_HASH=$GIT_SHORT_HASH" >> "$GITHUB_OUTPUT"
+
+  build-images:
+    name: Build Images
+    needs: prepare
+    uses: ./.github/workflows/build-images.yml
+    secrets: inherit
+    with:
+      build-type: canary
+      app-version: ${{ needs.prepare.outputs.APP_VERSION }}
+      git-short-hash: ${{ needs.prepare.outputs.GIT_SHORT_HASH }}
