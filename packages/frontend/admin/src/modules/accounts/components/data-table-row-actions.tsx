@@ -10,6 +10,7 @@ import {
   AccountBanIcon,
   DeleteIcon,
   EditIcon,
+  EmailIcon,
   LockIcon,
   MoreHorizontalIcon,
 } from '@blocksuite/icons/rc';
@@ -28,7 +29,9 @@ import {
   useDisableUser,
   useEnableUser,
   useResetUserPassword,
+  useVerifyUser,
 } from './use-user-management';
+import { VerifyEmailDialog } from './verify-email';
 import { UpdateUserForm } from './user-form';
 
 interface DataTableRowActionsProps {
@@ -40,6 +43,7 @@ export function DataTableRowActions({ user }: DataTableRowActionsProps) {
   const [resetPasswordDialogOpen, setResetPasswordDialogOpen] = useState(false);
   const [disableDialogOpen, setDisableDialogOpen] = useState(false);
   const [enableDialogOpen, setEnableDialogOpen] = useState(false);
+  const [verifyEmailDialogOpen, setVerifyEmailDialogOpen] = useState(false);
   const [discardDialogOpen, setDiscardDialogOpen] = useState(false);
   const {
     openPanel,
@@ -53,6 +57,7 @@ export function DataTableRowActions({ user }: DataTableRowActionsProps) {
   const deleteUser = useDeleteUser();
   const disableUser = useDisableUser();
   const enableUser = useEnableUser();
+  const verifyUser = useVerifyUser();
   const { resetPasswordLink, onResetPassword } = useResetUserPassword();
 
   const openResetPasswordDialog = useCallback(() => {
@@ -94,6 +99,13 @@ export function DataTableRowActions({ user }: DataTableRowActionsProps) {
     setEnableDialogOpen(false);
   }, [closePanel, isOpen]);
 
+  const handleVerifyingEmail = useCallback(() => {
+    setVerifyEmailDialogOpen(false);
+  }, []);
+  const handleVerifyEmail = useCallback(() => {
+    verifyUser(user.id, handleVerifyingEmail);
+  }, [verifyUser, handleVerifyingEmail, user.id]);
+
   const handleDelete = useCallback(() => {
     deleteUser(user.id, handleDeleting);
   }, [deleteUser, handleDeleting, user.id]);
@@ -123,6 +135,13 @@ export function DataTableRowActions({ user }: DataTableRowActionsProps) {
   }, []);
   const closeEnableDialog = useCallback(() => {
     setEnableDialogOpen(false);
+  }, []);
+
+  const openVerifyEmailDialog = useCallback(() => {
+    setVerifyEmailDialogOpen(true);
+  }, []);
+  const closeVerifyEmailDialog = useCallback(() => {
+    setVerifyEmailDialogOpen(false);
   }, []);
 
   const handleConfirm = useCallback(() => {
@@ -190,6 +209,15 @@ export function DataTableRowActions({ user }: DataTableRowActionsProps) {
             <LockIcon fontSize={20} />
             {user.hasPassword ? 'Reset Password' : 'Setup Account'}
           </DropdownMenuItem>
+          {!user.emailVerified && (
+            <DropdownMenuItem
+              className="px-2 py-[6px] text-sm font-normal gap-2 cursor-pointer"
+              onSelect={openVerifyEmailDialog}
+            >
+              <EmailIcon fontSize={20} />
+              Verify Email
+            </DropdownMenuItem>
+          )}
           {user.disabled && (
             <DropdownMenuItem
               className="px-2 py-[6px] text-sm font-normal gap-2 cursor-pointer"
@@ -238,6 +266,13 @@ export function DataTableRowActions({ user }: DataTableRowActionsProps) {
         onClose={closeEnableDialog}
         onOpenChange={setEnableDialogOpen}
         onConfirm={handleEnable}
+      />
+      <VerifyEmailDialog
+        email={user.email}
+        open={verifyEmailDialogOpen}
+        onClose={closeVerifyEmailDialog}
+        onOpenChange={setVerifyEmailDialogOpen}
+        onConfirm={handleVerifyEmail}
       />
       <ResetPasswordDialog
         link={resetPasswordLink}

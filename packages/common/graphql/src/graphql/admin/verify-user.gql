@@ -1,0 +1,6 @@
+mutation verifyUser($id: String!) {
+  verifyUser(id: $id) {
+    email
+    emailVerified
+  }
+}

@@ -7263,6 +7263,19 @@ export type VerifyEmailMutation = {
   verifyEmail: boolean;
 };
 
+export type VerifyUserMutationVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+export type VerifyUserMutation = {
+  __typename?: 'Mutation';
+  verifyUser: {
+    __typename?: 'UserType';
+    email: string;
+    emailVerified: boolean;
+  };
+};
+
 export type WorkspaceBlobQuotaQueryVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
@@ -7994,6 +8007,11 @@ export type Mutations =
       name: 'updateAppConfigMutation';
       variables: UpdateAppConfigMutationVariables;
       response: UpdateAppConfigMutation;
+    }
+  | {
+      name: 'verifyUserMutation';
+      variables: VerifyUserMutationVariables;
+      response: VerifyUserMutation;
     }
   | {
       name: 'deleteBlobMutation';

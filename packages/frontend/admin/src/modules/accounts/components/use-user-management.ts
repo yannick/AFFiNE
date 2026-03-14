@@ -15,6 +15,7 @@ import {
   listUsersQuery,
   updateAccountFeaturesMutation,
   updateAccountMutation,
+  verifyUserMutation,
 } from '@affine/graphql';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
@@ -172,6 +173,31 @@ export const useDeleteUser = () => {
   );
 
   return deleteById;
+};
+
+export const useVerifyUser = () => {
+  const { trigger: verifyUserById } = useMutation({
+    mutation: verifyUserMutation,
+  });
+
+  const revalidate = useMutateQueryResource();
+
+  const verifyById = useAsyncCallback(
+    async (id: string, callback?: () => void) => {
+      await verifyUserById({ id })
+        .then(async ({ verifyUser }) => {
+          await revalidate(listUsersQuery);
+          toast(`Email for ${verifyUser.email} verified successfully`);
+          callback?.();
+        })
+        .catch(e => {
+          toast.error('Failed to verify email: ' + e.message);
+        });
+    },
+    [verifyUserById, revalidate]
+  );
+
+  return verifyById;
 };
 
 export const useEnableUser = () => {

@@ -422,4 +422,15 @@ export class UserManagementResolver {
   async enableUser(@Args('id') id: string): Promise<UserType> {
     return sessionUser(await this.models.user.enable(id));
   }
+
+  @Mutation(() => UserType, {
+    description: 'Verify the email of a user',
+  })
+  async verifyUser(@Args('id') id: string): Promise<UserType> {
+    return sessionUser(
+      await this.models.user.update(id, {
+        emailVerifiedAt: new Date(),
+      })
+    );
+  }
 }
