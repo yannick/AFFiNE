@@ -443,17 +443,6 @@ export const enableUserMutation = {
 }`,
 };
 
-export const verifyUserMutation = {
-  id: 'verifyUserMutation' as const,
-  op: 'verifyUser',
-  query: `mutation verifyUser($id: String!) {
-  verifyUser(id: $id) {
-    email
-    emailVerified
-  }
-}`,
-};
-
 export const getUserByEmailQuery = {
   id: 'getUserByEmailQuery' as const,
   op: 'getUserByEmail',
@@ -556,6 +545,17 @@ export const validateConfigQuery = {
     value
     valid
     error
+  }
+}`,
+};
+
+export const verifyUserMutation = {
+  id: 'verifyUserMutation' as const,
+  op: 'verifyUser',
+  query: `mutation verifyUser($id: String!) {
+  verifyUser(id: $id) {
+    email
+    emailVerified
   }
 }`,
 };

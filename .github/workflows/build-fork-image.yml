@@ -24,7 +24,7 @@ jobs:
         with:
           electron-install: false
       - name: Set version
-        run: ./scripts/set-version.sh 0.0.0-dev.$(git rev-parse --short HEAD)
+        run: ./scripts/set-version.sh "0.0.0-dev.$(git rev-parse --short HEAD)"
       - name: Build Web
         run: yarn affine @affine/web build
         env:
@@ -67,7 +67,7 @@ jobs:
           electron-install: false
           extra-flags: workspaces focus @affine/server-native
       - name: Set version
-        run: ./scripts/set-version.sh 0.0.0-dev.$(git rev-parse --short HEAD)
+        run: ./scripts/set-version.sh "0.0.0-dev.$(git rev-parse --short HEAD)"
       - name: Build Rust
         uses: ./.github/actions/build-rust
         with:
@@ -92,12 +92,18 @@ jobs:
           electron-install: false
           extra-flags: workspaces focus @affine/server @types/affine__env
       - name: Set version
-        run: ./scripts/set-version.sh 0.0.0-dev.$(git rev-parse --short HEAD)
+        run: ./scripts/set-version.sh "0.0.0-dev.$(git rev-parse --short HEAD)"
       - name: Download server-native
         uses: actions/download-artifact@v4
         with:
           name: server-native
           path: ./packages/backend/native
+      - name: Create dummy native binaries for non-target architectures
+        run: |
+          touch ./packages/backend/native/server-native.x64.node
+          touch ./packages/backend/native/server-native.arm64.node
+          touch ./packages/backend/native/server-native.armv7.node
+          ls -la ./packages/backend/native/
       - name: Build Server
         run: yarn workspace @affine/server build
       - name: Upload server dist

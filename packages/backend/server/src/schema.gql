@@ -1661,6 +1661,9 @@ type Mutation {
   """Upload a comment attachment and return the access url"""
   uploadCommentAttachment(attachment: Upload!, docId: String!, workspaceId: String!): String!
   verifyEmail(token: String!): Boolean!
+
+  """Verify the email of a user"""
+  verifyUser(id: String!): UserType!
 }
 
 type NoCopilotProviderAvailableDataType {

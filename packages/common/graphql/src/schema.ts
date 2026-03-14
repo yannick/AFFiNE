@@ -1828,6 +1828,8 @@ export interface Mutation {
   /** Upload a comment attachment and return the access url */
   uploadCommentAttachment: Scalars['String']['output'];
   verifyEmail: Scalars['Boolean']['output'];
+  /** Verify the email of a user */
+  verifyUser: UserType;
 }
 
 export interface MutationAbortBlobUploadArgs {
@@ -2286,6 +2288,10 @@ export interface MutationUploadCommentAttachmentArgs {
 
 export interface MutationVerifyEmailArgs {
   token: Scalars['String']['input'];
+}
+
+export interface MutationVerifyUserArgs {
+  id: Scalars['String']['input'];
 }
 
 export interface NoCopilotProviderAvailableDataType {
@@ -3985,6 +3991,19 @@ export type ValidateConfigQuery = {
     valid: boolean;
     error: string | null;
   }>;
+};
+
+export type VerifyUserMutationVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+export type VerifyUserMutation = {
+  __typename?: 'Mutation';
+  verifyUser: {
+    __typename?: 'UserType';
+    email: string;
+    emailVerified: boolean;
+  };
 };
 
 export type DeleteBlobMutationVariables = Exact<{
@@ -7261,19 +7280,6 @@ export type VerifyEmailMutationVariables = Exact<{
 export type VerifyEmailMutation = {
   __typename?: 'Mutation';
   verifyEmail: boolean;
-};
-
-export type VerifyUserMutationVariables = Exact<{
-  id: Scalars['String']['input'];
-}>;
-
-export type VerifyUserMutation = {
-  __typename?: 'Mutation';
-  verifyUser: {
-    __typename?: 'UserType';
-    email: string;
-    emailVerified: boolean;
-  };
 };
 
 export type WorkspaceBlobQuotaQueryVariables = Exact<{
