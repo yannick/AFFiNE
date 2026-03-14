@@ -31,8 +31,8 @@ import {
   useResetUserPassword,
   useVerifyUser,
 } from './use-user-management';
-import { VerifyEmailDialog } from './verify-email';
 import { UpdateUserForm } from './user-form';
+import { VerifyEmailDialog } from './verify-email';
 
 interface DataTableRowActionsProps {
   user: UserType;
